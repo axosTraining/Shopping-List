@@ -1,72 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Button, FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
-  const [result, setResult] = useState('');
-  const [x, setX] = useState('');
-  const [y, setY] = useState('');
-  const [history, setHistory] = useState([]);
+  const [product, setProduct] = useState('');
+  const [list, setList] = useState([]);
 
-  const checkValues = () => {
-    let check = true;
-    if (isNaN(x) && !isNaN(y)) {
-      check = false;
-      setResult('Type the first value please')
-    } else if (!isNaN(x) && isNaN(y)) {
-      check = false;
-      setResult('Type the second value please')
-    } else if (isNaN(x) && isNaN(y)) {
-      check = false;
-      setResult('Type the values please')
-    }
-    return (check);
-  }
-
-  const makeMinus = () => {
-    let check = checkValues();
-    if (check) {
-      setResult(`Result: ${x - y}`);
-      setHistory([`${x} - ${y} = ${x - y}`, ...history]);
-    }
-  }
-
-  const makePlus = () => {
-    if (checkValues()) {
-      setResult(`Result: ${x + y}`);
-      setHistory([`${x} + ${y} = ${x + y}`, ...history]);
+  const addProduct = () => {
+    if (product !== '') {
+      setList([product, ...list]);
+      setProduct('');
+    } else {
+      alert('please fill in product field');
     }
   }
 
   const clearAll = () => {
-    setResult('');
-    setX('');
-    setY('');
+    setList([]);
+    setProduct('');
   }
 
   return (
     <View style={styles.container}>
-      <Text>{result}</Text>
       <TextInput
         style={styles.textfield}
-        onChangeText={currValue => setX(parseInt(currValue))}
-        value={x}
-        keyboardType='numeric'
-      />
-      <TextInput
-        keyboardType='numeric'
-        style={styles.textfield}
-        onChangeText={currValue => setY(parseInt(currValue))}
-        value={y}
+        onChangeText={currValue => setProduct(currValue)}
+        value={product}
       />
       <View style={{ flexDirection: 'row' }}>
-        <Button onPress={makePlus} title='+' />
-        <Button onPress={makeMinus} title='-' />
+        <Button onPress={addProduct} title='Add' />
+        <Button onPress={clearAll} title='Clear' />
       </View>
-      <Button onPress={clearAll} title='Clear' />
-      <Text>History:</Text>
+      {list.length > 0 && <Text style={styles.header}>Shopping List:</Text>}
       <FlatList
-        data={history}
+        data={list}
         renderItem={({ item }) => <Text style={{ fontSize: 18 }}>{item}</Text>}
       />
     </View>
@@ -87,5 +53,10 @@ const styles = StyleSheet.create({
     width: 200,
     borderColor: 'gray',
     borderWidth: 1
+  },
+  header: {
+    marginTop: 10,
+    color: 'blue',
+    fontWeight: 'bold',
   }
 });
